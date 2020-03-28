@@ -119,7 +119,7 @@ class WoodCutterController extends StatelessWidget {
   Set<RelativeCoordinate> cuttedBlocks = {};
 
   // Initializing wood cutter surfaces
-  WoodCutterController({int xLimit = 5, int yLimit = 5, int zLimit = 5, int sawX = 0, int sawY = 0}) {
+  WoodCutterController({int xLimit = 3, int yLimit = 4, int zLimit = 3, int sawX = 0, int sawY = 0}) {
     axisLimits[Axis.X] = xLimit;
     axisLimits[Axis.Y] = yLimit;
     axisLimits[Axis.Z] = zLimit;

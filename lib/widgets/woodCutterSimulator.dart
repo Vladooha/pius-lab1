@@ -281,15 +281,9 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
               response.body["status"], 
               response.body["isAuto"], 
               response.body["setupChanged"], 
-<<<<<<< HEAD
-              int.parse(response.body["x"]), 
-              int.parse(response.body["y"]),
-              int.parse(response.body["z"])
-=======
               response.body["x"], 
               response.body["y"],
               response.body["z"]
->>>>>>> 24abb8d2dc2294983facded10892495666cca1be
             );
           } catch (error) {}
         }
