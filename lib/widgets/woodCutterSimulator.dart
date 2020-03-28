@@ -195,7 +195,6 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
               isStopped = false;
               isPaused = false;
             });
-            _webBlock();
           }
         });
     }
@@ -261,14 +260,18 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
         if (response.status == 200) {
           print("WoodCutter /block 200 OK");
 
-          _nextBlock(
-            response.body["status"], 
-            response.body["isAuto"].toLowerCase() == 'true', 
-            response.body["setupChanged"].toLowerCase() == 'true', 
-            int.parse(response.body["x"]), 
-            int.parse(response.body["y"]),
-            int.parse(response.body["z"])
-          );
+          try {
+            _nextBlock(
+              response.body["status"], 
+              response.body["isAuto"].toLowerCase() == 'true', 
+              response.body["setupChanged"].toLowerCase() == 'true', 
+              int.parse(response.body["x"]), 
+              int.parse(response.body["y"]),
+              int.parse(response.body["z"])
+            );
+          } catch (error) {
+            print(error);
+          }
         }
       })
       .catchError((error) {});
@@ -299,6 +302,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
         });
       }
 
+      print("Move saw on $x $y $z");
       woodCutterController.moveSaw(x, y, z);
     }
 
