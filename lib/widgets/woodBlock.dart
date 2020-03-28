@@ -27,6 +27,8 @@ class WoodBlockState extends State<WoodBlock> {
 
   final List<WoodParticle> particles = [];
 
+  // Draws wood block on screen
+  // `context` - context of visual widget tree
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,12 +48,15 @@ class WoodBlockState extends State<WoodBlock> {
     );
   }
 
+  // Returns image in dependency of wood block state
   _getImage() => !widget.isCutted
     ? WOOD_IMAGE
     : hasBlockBehind
       ? SHADOW_WOOD_IMAGE
       : EMPTY_BLOCK;
 
+  // Deletes wood particles after given time
+  // `time` - duration of wood particle existence 
   _manageParticleLifecycle(Duration time) {
     currentTime = time;
 
@@ -60,6 +65,8 @@ class WoodBlockState extends State<WoodBlock> {
     });
   }
 
+  // Cutting wood block (wood block state becomes cutted)
+  // `time` - duration of wood particle existence
   cut({Duration time}) => setState(() {
     if (!widget.isCutted) {
       Iterable.generate(WOOD_PARTICLE_COUNT)
@@ -68,7 +75,9 @@ class WoodBlockState extends State<WoodBlock> {
     }
   });
 
+  // Removes cutted dark wood block background
   removeBlocksBehind() => setState(() => hasBlockBehind = false);
   
+  // Adds cutted dark wood block background
   addBlocksBehind() => setState(() => hasBlockBehind = true);
 }

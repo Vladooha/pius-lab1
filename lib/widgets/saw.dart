@@ -25,6 +25,7 @@ class SawState extends State<Saw> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation _rotateAnimation;
 
+  // Initialize saw state
   @override
   void initState() {
     super.initState();
@@ -34,6 +35,8 @@ class SawState extends State<Saw> with SingleTickerProviderStateMixin {
 
   SawState({this.x = 0, this.y = 0});
 
+  // Draws saw on screen
+  // `context` - context of visual widget tree
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -46,6 +49,7 @@ class SawState extends State<Saw> with SingleTickerProviderStateMixin {
     );
   }
   
+  // Launching saw rotation animation
   _prepareAnimation() {
     _animationController = AnimationController(
       vsync: this,
@@ -74,10 +78,12 @@ class SawState extends State<Saw> with SingleTickerProviderStateMixin {
     _animationController.forward();
   }
 
+  // Returns current saw rotation angle
   double _getAngle() => widget.isFrontView
     ? _rotateAnimation.value
     : MIN_ANGLE;
 
+  // Turning off saw rotation animation
   @override
   void dispose() {
     _animationController.dispose();

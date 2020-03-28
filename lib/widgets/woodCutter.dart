@@ -17,12 +17,16 @@ class WoodCutter extends StatefulWidget {
 
   WoodCutter({Key key, this.xSize = 10, this.ySize = 10, this.blockLength = 42, this.isFrontLayer = true}) : super(key: key);
 
+  // Places saw on current coordinates
+  // `x` - saw x coordinate
+  // `y` - saw x coordinate
   initializeSaw(int x, int y) {
     shouldInitSaw = true;
     sawX = x;
     sawY = y;
   }
 
+  // Initializing widget state
   @override
   WoodCutterState createState() {
     var state = WoodCutterState();
@@ -54,6 +58,7 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
 
   List<WoodBlock> woodBlocks = [];
 
+  // Initializing state variables
   @override
   void initState() { 
     super.initState();
@@ -70,6 +75,8 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     }
   }
 
+  // Draws wood cutter surface on screen
+  // `context` - context of visual widget tree
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -99,24 +106,39 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     );
   }
 
+  // Removes all blocks behind current
+  // `x` - x coordintae of block
+  // `y` - y coordintae of block
   clearBlocksBehind(int x, int y) async {
     var key = _findBlock(x, y).key as GlobalKey<WoodBlockState>;
     key.currentState.removeBlocksBehind();
   }
 
+  // Adds blocks behind current
+  // `x` - x coordintae of block
+  // `y` - y coordintae of block
   addBlocksBehind(int x, int y) {
     var key = _findBlock(x, y).key as GlobalKey<WoodBlockState>;
     key.currentState.addBlocksBehind();
   }
 
+  // Cuts current block
+  // `x` - x coordintae of block
+  // `y` - y coordintae of block
   cutBlock(int x, int y) {
     _findBlock(x, y).isCutted = true;
   }
 
+  // Recreates blocks
+  // `x` - x coordintae of block
+  // `y` - y coordintae of block
   restoreBlock(int x, int y) {
     _findBlock(x, y).isCutted = false;
   }
 
+  // Recreates blocks
+  // `x` - x coordintae of block
+  // `y` - y coordintae of block
   placeSawOnBuild(int x, int y) {
     sawCoordX = x;
     sawCoordY = y;
@@ -124,6 +146,9 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     initSawOnBuild = true;
   }
 
+  // Replacing saw by current coordinates
+  // `x` - new x coordinate of saw
+  // `y` - new y coordintae of block
   placeSaw(int x, int y) {
     isSawPlaced = true;
 
@@ -135,25 +160,41 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     sawRealY = sawRealPos[1];
   }
 
+  // Removing saw from field
   removeSaw() {
     isSawPlaced = false;
   }
 
+  // Move saw by x and y offset
+  // `dx` - x offset
+  // `dy` - y offset
+  // `withCut` - should block be cutted
   moveSawRelative(int dx, int dy, {bool withCut = true}) async {
     moveSaw(sawCoordX + dx, sawCoordY + dy, withCut: true);
   }
 
+  // Move saw by coordinates
+  // `x` - new x coordinate
+  // `y` - new y coordinate
+  // `withCut` - should block be cutted
   moveSaw(int x, int y, {bool withCut = true}) {
     if (!inputLocked && isSawPlaced) {
       _moveSaw(x: x, y: y, withCut: withCut);
     }
   }
 
-  _findBlock(int x, int y) {
+  // Returns block on current coordinates
+  // `x` - block x coordinate
+  // `y` - block y coordinate
+  WoodBlock _findBlock(int x, int y) {
     return woodBlocks
       .firstWhere((woodBlock) => woodBlock.x == x && woodBlock.y == y, orElse: () => null);
   }
 
+  // Replacing saw on current coordinates
+  // `x` - new saw x coordinate
+  // `y` - new saw y coordinate
+  // `withCut` - should wood block on (`x`, `y`) coordinates be cutted
   _moveSaw({int x, int y, bool withCut: true}) {
     inputLocked = true;
 
@@ -168,6 +209,9 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     _runAnimation(_sawYMoveAnimationController, _sawYMoveAnimation, withCut: withCut);
   }
 
+  // Creates saw animation on X axis
+  // `oldValue` - old left-top pixel on screen
+  // `oldValue` - new left-top pixel on screen
   _reinitXAxisAnimation(double oldValue, double newValue) {
     _sawXMoveAnimationController?.stop();
     
@@ -185,6 +229,9 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     .animate(_sawXMoveAnimationController);
   }
 
+  // Creates saw animation on Y axis
+  // `oldValue` - old left-top pixel on screen
+  // `oldValue` - new left-top pixel on screen
   _reinitYAxisAnimation(double oldValue, double newValue) {
     _sawYMoveAnimationController?.stop();
     
@@ -202,6 +249,10 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     .animate(_sawYMoveAnimationController);
   }
 
+  // Starts saw animation
+  // `animationController` - animation variables holder
+  // `animation` - animation event listener
+  // `withCut` - should catched blocks be cutted
   _runAnimation(AnimationController animationController, Animation animation, {bool withCut: true}) {
     animationController?.stop();
 
@@ -223,6 +274,7 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     animationController.forward();
   }
 
+  // Saves new saw real and coordinates positions
   _saveSawPosition() {
     sawRealX = _sawXMoveAnimation?.value ?? sawRealX;
     sawRealY = _sawYMoveAnimation?.value ?? sawRealY;
@@ -232,12 +284,16 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     sawCoordY = sawCoords[1];
   }
 
+  // Cutting block on position where saw placed
   _cutWoodBlock() {
     GlobalKey<WoodBlockState> woodBlockStateKey = _findBlock(sawCoordX, sawCoordY)?.key;
 
     woodBlockStateKey?.currentState?.cut();
   }
 
+  // Converts coordinates to real position
+  // `coordX` - saw x coordinate
+  // `coordY` - saw y coordinate
   List<double> _getSawRealPosition(int coordX, int coordY) {
     double realX = coordX * widget.blockLength;
     double realY = coordY * widget.blockLength - widget.blockLength / 2;
@@ -245,6 +301,9 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     return [realX, realY];
   }
 
+  // Converts real positions to coordinates
+  // `realX` - saw x real position
+  // `realY` - saw y real position
   List<int> _getSawCooords(double realX, double realY) {
     int coordX = (realX / widget.blockLength).round();
     int coordY = ((realY + widget.blockLength / 2) / widget.blockLength).round();
@@ -252,6 +311,7 @@ class WoodCutterState extends State<WoodCutter> with TickerProviderStateMixin {
     return [coordX, coordY];
   }
 
+  // Widget destructor
   @override
   void dispose() {
     _sawXMoveAnimationController.dispose();

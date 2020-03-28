@@ -5,17 +5,16 @@ class Response {
   final int status;
   final Map<String, dynamic> body;
 
-  Response({this.status = 200, this.body = const {}}) {
-    print("Response body:");
-    body.forEach((key, value) {
-      print("[$key] $value");
-     });
-  }
+  Response({this.status = 200, this.body = const {}});
 }
 
 class Web {
   static const String HTTP_PROTOCOL = "http://";
 
+  // Creates http GET request
+  // `address` - host address
+  // `contextPath` - URL context path part
+  // `parameters` - GET request URL parameters
   Future<Response> get(String address, String contextPath, {Map<String, String> parameters}) async {
     if (!address.startsWith(HTTP_PROTOCOL)) {
       address = HTTP_PROTOCOL + address;
@@ -29,9 +28,8 @@ class Web {
     }
 
     String fullAddress = address + contextPath + parametersStr;
-    print("[WEB] GET on $fullAddress");
     return http.get(fullAddress)
       .then((response) => Response(status: response.statusCode, body: json.decode(response.body)))
-      .catchError((error) => print(error));
+      .catchError((error) {});
   }
 }

@@ -14,6 +14,7 @@ class WoodParticle {
   double height;
   final Random random = Random();
 
+  // Generates random visual particle parameters
   WoodParticle(Duration time, double blockLength) {
     int redColorPart = (180 * (1 + 0.2 * random.nextDouble())).toInt();
     int greenColorPart = (145 * (1 + 0.2 * random.nextDouble())).toInt();
@@ -39,6 +40,7 @@ class WoodParticle {
     );
   }
 
+  // Returns widget based on particle visual parameters 
   buildWidget(Duration time) {
     final animation = tween.transform(progress.progress(time));
 

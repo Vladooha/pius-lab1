@@ -18,6 +18,7 @@ class WoodCutterSimualtor extends StatefulWidget {
 
   TextEditingController addressController;
 
+  // Initializing textfields' text holders
   WoodCutterSimualtor() {
     xBeginController = TextEditingController();
     yBeginController = TextEditingController();
@@ -29,6 +30,7 @@ class WoodCutterSimualtor extends StatefulWidget {
     addressController = TextEditingController();
   }
 
+  // Initializing wood cutter simualtor state
   @override
   State<StatefulWidget> createState() => WoodCutterSimualtorState();
 }
@@ -43,6 +45,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
 
   bool isStepProcessing = false;
 
+  // Initializing textfields' text error map
   @override
   void initState() {
     super.initState();
@@ -59,6 +62,8 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     };
   }
 
+  // Draws wood cutter simulator on screen
+  // `context` - context of visual widget tree
   @override
   Widget build(BuildContext context) {
     String mode = isAuto
@@ -120,6 +125,10 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     );
   }
 
+  // Creating text field
+  // `controller` - text holder
+  // `name` - field name
+  // `maxValue` - max number value of textfield
   Widget _createTextField(TextEditingController controller, String name, {int maxValue}) {
     bool errorStatus = errorMap[controller];
     
@@ -147,6 +156,9 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     );
   }
 
+  // Creating button with current listener
+  // `name` - button visible name
+  // `onTap` - function execting when button is pressed
   Widget _createButton(String name, Function onTap) {
     return Padding(
       padding: EdgeInsets.all(5.0),
@@ -158,7 +170,10 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     );
   }
   
-  void Function(String) _getValidator(TextEditingController controller, {int maxValue}) {
+  // Creates validator for textfield content
+  // `controller` - textfield's text holder
+  // `maxValue` - max number value of textfield
+   void Function(String) _getValidator(TextEditingController controller, {int maxValue}) {
     return (valueStr) {
       if (errorMap.containsKey(controller)) {
         bool hasError = false;
@@ -178,6 +193,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     };
   }
 
+  // Sending pazz setup to server
   _webSetup() {
     if (!errorMap.containsValue(true)) {
       Map<String, String> parameters = {
@@ -200,28 +216,30 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     }
   }
 
+  // Sending start signal to server
   _webStart() {
-    print("WoodCutter /start request...");
     widget.web.get(widget.addressController.text, "/start")
       .then((response) {
         if (response.status == 200) {
-          print("WoodCutter /start 200 OK");
           setState(() => isPaused = false);
           _webBlock();
         }
       });
   }
 
+  // Sending pause signal to server
   _webPause() {
     widget.web.get(widget.addressController.text, "/pause")
       .then((response) => setState(() => isPaused = true));
   }
 
+  // Sending stop signal to server
   _webExit() {
     widget.web.get(widget.addressController.text, "/stop")
       .then((response) => setState(() => isStopped = true));
   }
 
+  // Sending auto mode signal to server. Simulator switching to auto mode
   _webAuto() {
     if (!errorMap[widget.timeController]) {
       widget.web.get(widget.addressController.text, "/auto", parameters: {"timeMs" : widget.timeController.text})
@@ -229,6 +247,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     }
   }
 
+  // Sending manual mode signal to server. Simulator switching to manual mode
   _webManual() {
     if (isAuto) {
       widget.web.get(widget.addressController.text, "/manual")
@@ -236,6 +255,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     }
   }
 
+  // Sending next signal to server. Allows recieving of next block in manual mode
   _webNext() async {
     if (!isAuto && !isStepProcessing) {
       isStepProcessing = true;
@@ -244,34 +264,27 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     }
   }
 
+  // Sending next block position to server 
   Future<bool> _webBlock() async {
-    print("WoodCutter /block request...");
     do {
       if (isPaused) {
-        print("WoodCutter paused...");
         await new Future.delayed(Duration(milliseconds: 300));
         break;
       }
 
       widget.web.get(widget.addressController.text, "/block")
       .then((response) {
-        print("WoodCutter /block response");
-        
         if (response.status == 200) {
-          print("WoodCutter /block 200 OK");
-
           try {
             _nextBlock(
               response.body["status"], 
-              response.body["isAuto"].toLowerCase() == 'true', 
-              response.body["setupChanged"].toLowerCase() == 'true', 
+              response.body["isAuto"], 
+              response.body["setupChanged"], 
               int.parse(response.body["x"]), 
               int.parse(response.body["y"]),
               int.parse(response.body["z"])
             );
-          } catch (error) {
-            print(error);
-          }
+          } catch (error) {}
         }
       })
       .catchError((error) {});
@@ -291,9 +304,8 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     return true;
   }
 
+  // Moves saw to next block
   _nextBlock(String status, bool isAuto, bool isSetupChanged, int x, int y, int z) {
-    print("Block - status - $status, isAuto - $isAuto, isSetupChanged - $isSetupChanged, x - $x, y - $y, z - $z");
-
     if (status == "work") {
       if (isSetupChanged) {
         setState(() {
@@ -301,8 +313,6 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
           woodCutterController = woodCutter.WoodCutterController(sawX: x, sawY: y);
         });
       }
-
-      print("Move saw on $x $y $z");
       woodCutterController.moveSaw(x, y, z);
     }
 
