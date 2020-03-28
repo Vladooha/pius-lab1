@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  front:
+    image: pilorez.front
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.front
+    ports:
+      - 8080:5000
+    command: flutter run -d web --web-port 5000 --web-hostname 0.0.0.0 --release
+
+  back:
+    image: pilorez.back
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.back
+    ports:
+      - 8081:5000
+    command: uvicorn server:app --port 5000 --host 0.0.0.0 --reload

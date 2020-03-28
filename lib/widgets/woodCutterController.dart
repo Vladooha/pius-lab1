@@ -206,7 +206,7 @@ class WoodCutterController extends StatelessWidget {
   // `y` - new saw y coordinate
   // `z` - new saw z coordinate
   moveSaw(int x, int y, int z) {
-    _moveSaw(RelativeCoordinate(x: x, y: y, z: z));
+      _moveSaw(RelativeCoordinate(x: x, y: y, z: z));
   }
 
   // Moving saw on all surfaces on current relative coordinate
@@ -223,10 +223,8 @@ class WoodCutterController extends StatelessWidget {
         int relativeY = relativeAxisMap[Axis.Y];
         bool shouldCut = relativeAxisMap[Axis.Z] == 0;
         
-        if (shouldCut) {
           _cutBlock(coordinate);
-        }
-
+      
         key.currentState.moveSaw(relativeX, relativeY, withCut: shouldCut);
       });
 
@@ -234,6 +232,7 @@ class WoodCutterController extends StatelessWidget {
 
       sawCoordinate = coordinate;
 
+      
       inputLocked = false;
     }
   }

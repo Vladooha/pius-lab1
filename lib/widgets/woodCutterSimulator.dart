@@ -66,6 +66,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   // `context` - context of visual widget tree
   @override
   Widget build(BuildContext context) {
+    //woodCutterController.moveSaw(nextX, nextY, nextZ);
     String mode = isAuto
       ? "Автоматический режим"
       : "Ручной режим";
@@ -280,9 +281,15 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
               response.body["status"], 
               response.body["isAuto"], 
               response.body["setupChanged"], 
+<<<<<<< HEAD
               int.parse(response.body["x"]), 
               int.parse(response.body["y"]),
               int.parse(response.body["z"])
+=======
+              response.body["x"], 
+              response.body["y"],
+              response.body["z"]
+>>>>>>> 24abb8d2dc2294983facded10892495666cca1be
             );
           } catch (error) {}
         }
@@ -307,13 +314,14 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   // Moves saw to next block
   _nextBlock(String status, bool isAuto, bool isSetupChanged, int x, int y, int z) {
     if (status == "work") {
-      if (isSetupChanged) {
-        setState(() {
+      setState(() {
+        if (isSetupChanged) {
           isPaused = false;
           woodCutterController = woodCutter.WoodCutterController(sawX: x, sawY: y);
-        });
-      }
-      woodCutterController.moveSaw(x, y, z);
+        }
+
+        woodCutterController.moveSaw(x, y, z);
+      });
     }
 
     if (status == "pause") {
