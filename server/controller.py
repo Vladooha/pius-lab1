@@ -24,26 +24,29 @@ class Controller:
             y_length = y_end - y_begin + 1
             
             y_coords = list(range(y_begin, y_end + 1))
-            if z % 2 == 0:
+            if z % 2 == 1:
                 y_coords = y_coords[::-1]
-
+            
             for y in y_coords:
-                for x in range(x_begin, x_end + 1):
+                x_coords = list(range(x_begin, x_end + 1))
+                if (y + z) % 2 == 1:
+                    x_coords = x_coords[::-1]
+                for x in x_coords:
                     self._queue.append((x, y, z))
 
+        self._queue = [(self._queue[0][0], self._queue[0][1], -1)] + self._queue
         logging.info(f"Setup queue: {self._queue}")
 
 
     def get_block(self) -> Block:
         logging.info(f"Getting block")
         if ~self.is_auto:
-            logging.info(f"Not auto")
             pass
         
         if not self._queue:
-            raise Exception("Queue is empty!")
+            self.status = Status.STOPPED
         
-        x, y, z = self._queue.pop()
+        x, y, z = self._queue.pop(0)
         block = Block(
             status=self.status,
             isAuto=self.is_auto,

@@ -4,12 +4,12 @@ import 'package:http/http.dart' as http;
 class Response {
   final int status;
   final Map<String, dynamic> body;
-
+  
   Response({this.status = 200, this.body = const {}}) {
     print("Response body:");
     body.forEach((key, value) {
       print("[$key] $value");
-     });
+    });
   }
 }
 
