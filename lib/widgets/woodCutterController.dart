@@ -131,35 +131,35 @@ class WoodCutterController extends StatelessWidget {
             SizedBox(height: 2 * blockLength),
             Padding(padding: EdgeInsets.all(5.0), child: Text("YZ", style: TextStyle(fontSize: 12.0))),
             woodCutterMap[Surface.YZ],
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     MaterialButton(
-            //       child: Text("Forward"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dy: 1))
-            //     ), 
-            //     MaterialButton(
-            //       child: Text("Backward"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dy: -1))
-            //     ), 
-            //     MaterialButton(
-            //       child: Text("Right"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dx: 1)),
-            //     ), 
-            //     MaterialButton(
-            //       child: Text("Left"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dx: -1)),
-            //     ), 
-            //     MaterialButton(
-            //       child: Text("Up"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dz: -1)),
-            //     ), 
-            //     MaterialButton(
-            //       child: Text("Down"),
-            //       onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dz: 1)),
-            //     ), 
-            //   ],
-            // )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MaterialButton(
+                  child: Text("Forward"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dy: 1))
+                ), 
+                MaterialButton(
+                  child: Text("Backward"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dy: -1))
+                ), 
+                MaterialButton(
+                  child: Text("Right"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dx: 1)),
+                ), 
+                MaterialButton(
+                  child: Text("Left"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dx: -1)),
+                ), 
+                MaterialButton(
+                  child: Text("Up"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dz: -1)),
+                ), 
+                MaterialButton(
+                  child: Text("Down"),
+                  onPressed: () => _moveSaw(RelativeCoordinate.from(sawCoordinate, dz: 1)),
+                ), 
+              ],
+            )
           ],
         ),
       ),
@@ -167,7 +167,7 @@ class WoodCutterController extends StatelessWidget {
   }
 
   moveSaw(int x, int y, int z) {
-    _moveSaw(RelativeCoordinate(x: x, y: y, z: z));
+      _moveSaw(RelativeCoordinate(x: x, y: y, z: z));
   }
 
   _moveSaw(RelativeCoordinate coordinate) {
@@ -182,20 +182,15 @@ class WoodCutterController extends StatelessWidget {
         int relativeY = relativeAxisMap[Axis.Y];
         bool shouldCut = relativeAxisMap[Axis.Z] == 0;
         
-        if (shouldCut) {
           _cutBlock(coordinate);
-        }
-
+      
         key.currentState.moveSaw(relativeX, relativeY, withCut: shouldCut);
       });
 
       _clearBlocksBehind(coordinate);
 
       sawCoordinate = coordinate;
-
-      print('Cutted blocks');
-      cuttedBlocks.forEach((block) => print('${block.getX()} ${block.getY()} ${block.getZ()}'));
-
+      
       inputLocked = false;
     }
   }

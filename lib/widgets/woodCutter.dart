@@ -4,8 +4,6 @@ import 'package:pius_lab1/widgets/saw.dart';
 import 'package:pius_lab1/widgets/woodBlock.dart';
 
 class WoodCutter extends StatefulWidget {
-  static const DELAY = 2000;
-
   final int xSize;
   final int ySize;
   final double blockLength;

@@ -61,6 +61,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
 
   @override
   Widget build(BuildContext context) {
+    //woodCutterController.moveSaw(nextX, nextY, nextZ);
     String mode = isAuto
       ? "Автоматический режим"
       : "Ручной режим";
@@ -206,7 +207,12 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
       .then((response) {
         if (response.status == 200) {
           print("WoodCutter /start 200 OK");
-          setState(() => isPaused = false);
+          setState(() {
+            if (woodCutterController == null) {
+              woodCutterController = woodCutter.WoodCutterController();
+            }
+            isPaused = false;
+          });
           _webBlock();
         }
       });
@@ -263,11 +269,11 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
           try {
             _nextBlock(
               response.body["status"], 
-              response.body["isAuto"].toLowerCase() == 'true', 
-              response.body["setupChanged"].toLowerCase() == 'true', 
-              int.parse(response.body["x"]), 
-              int.parse(response.body["y"]),
-              int.parse(response.body["z"])
+              response.body["isAuto"], 
+              response.body["setupChanged"], 
+              response.body["x"], 
+              response.body["y"],
+              response.body["z"]
             );
           } catch (error) {
             print(error);
@@ -295,15 +301,14 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     print("Block - status - $status, isAuto - $isAuto, isSetupChanged - $isSetupChanged, x - $x, y - $y, z - $z");
 
     if (status == "work") {
-      if (isSetupChanged) {
-        setState(() {
+      setState(() {
+        if (isSetupChanged) {
           isPaused = false;
           woodCutterController = woodCutter.WoodCutterController(sawX: x, sawY: y);
-        });
-      }
-
-      print("Move saw on $x $y $z");
-      woodCutterController.moveSaw(x, y, z);
+        }
+        print("Move saw on $x $y $z");
+        woodCutterController.moveSaw(x, y, z);
+      });
     }
 
     if (status == "pause") {
