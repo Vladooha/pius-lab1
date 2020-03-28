@@ -1,9 +1,16 @@
 up:
-	make build-back
+	make up-front
 	make up-back
 
+build:
+	make build-front
+	make build-back
+
+stop:
+	docker-compose stop
+
 up-%:
-	docker-compose up $(subst up-,,$@)
+	docker-compose up -d $(subst up-,,$@)
 
 build-%:
 	docker-compose build $(subst build-,,$@)

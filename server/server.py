@@ -8,6 +8,7 @@ from models import Block, Status
 app = FastAPI()
 controller = Controller()
 
+# Настройка окружения
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -30,8 +31,8 @@ def read_root() -> str:
 @app.get("/setup")
 def read_setup(xBegin: int, xEnd: int, yBegin: int, yEnd: int, zEnd: int):
     '''
-    параметры паза [200 OK, если begin <= end, 
-    begin и end меньше либо равны габаритам куба. 
+    Параметры паза 
+    [200 OK] - если begin <= end, begin и end меньше либо равны габаритам куба. 
     Иначе 422 Unprocessable Entity]
     '''
     try:
@@ -87,12 +88,6 @@ def read_manual():
 @app.get("/block")
 def read_block() -> Block:
     '''
-    [200 OK] – возвращает JSON типа
+    [200 OK] – возвращает блок в виде JSON
     '''
-    try:
-        return controller.get_block()
-    except Exception as e:
-        raise HTTPException(
-            status_code=422, detail=str(e),
-            headers={"X-Error": str(e)}
-        )
+    return controller.get_block()

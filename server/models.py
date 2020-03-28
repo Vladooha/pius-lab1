@@ -11,9 +11,9 @@ class Status(Enum):
 
 
 class Block(BaseModel):
-    status: Status
-    isAuto: bool
-    setupChanged: bool
-    x: int
-    y: int
-    z: int
+    status: Status  # Статус работы станка
+    isAuto: bool  # Режим работы 
+    setupChanged: bool  # Флаг изменения настроек
+    x: int # Координата x
+    y: int # Координата y
+    z: int # Координата z
