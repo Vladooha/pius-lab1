@@ -1,6 +1,8 @@
 # pius_lab1
 
-A new Flutter project.
+First lab for Software Engineering of Control Systems (Trojan, MIET)
+
+Frontend part of woodcutter simulator
 
 ## Getting Started
 
