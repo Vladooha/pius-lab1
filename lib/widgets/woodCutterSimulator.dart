@@ -202,9 +202,11 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   }
 
   _webStart() {
+    print("WoodCutter /start request...");
     widget.web.get(widget.addressController.text, "/start")
       .then((response) {
         if (response.status == 200) {
+          print("WoodCutter /start 200 OK");
           setState(() => isPaused = false);
           _webBlock();
         }
@@ -244,15 +246,21 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   }
 
   Future<bool> _webBlock() async {
+    print("WoodCutter /block request...");
     do {
       if (isPaused) {
+        print("WoodCutter paused...");
         await new Future.delayed(Duration(milliseconds: 300));
         break;
       }
 
       widget.web.get(widget.addressController.text, "/block")
-      .then((response) { 
+      .then((response) {
+        print("WoodCutter /block response");
+        
         if (response.status == 200) {
+          print("WoodCutter /block 200 OK");
+
           _nextBlock(
             response.body["status"], 
             response.body["isAuto"].toLowerCase() == 'true', 
@@ -281,6 +289,8 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   }
 
   _nextBlock(String status, bool isAuto, bool isSetupChanged, int x, int y, int z) {
+    print("Block - status - $status, isAuto - $isAuto, isSetupChanged - $isSetupChanged, x - $x, y - $y, z - $z");
+
     if (status == "work") {
       if (isSetupChanged) {
         setState(() {
