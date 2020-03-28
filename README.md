@@ -1,10 +1,13 @@
-# pius_lab1
+# First lab for Software Engineering of Control Systems (Trojan, MIET)
 
-First lab for Software Engineering of Control Systems (Trojan, MIET)
+Frontend and backend parts of woodcutter simulator
 
-Frontend part of woodcutter simulator
+Both also packed in docker container
 
-## Getting Started
+# Frontend part preview
+![](example.png)
+
+## Getting Started with Flutter
 
 This project is a starting point for a Flutter application.
 
