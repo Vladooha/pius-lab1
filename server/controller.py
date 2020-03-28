@@ -4,20 +4,31 @@ from models import Block, Status
 
 
 class Controller:
+    '''
+    Класс-контроллер станка
+    В нём реализована логика
+    '''
     def __init__(self):
+        # Исходные настройка станка
         self.status = Status.NO_SETUP
         self.is_auto = False
-        self.sleep_time = 0
         self._setup_changed = False
+        # Список для хранения очереди блоков для вырезания
         self._queue = []
 
     def setup(self, x_begin: int, x_end: int, y_begin: int, y_end: int, z_end: int):
+        '''
+        Метод настройки работы станка, тут формируется очередь обработки блоков
+        '''
         self._setup_changed = True
+
+        # Праверка неверных введеных данных
         if x_begin > x_end:
             raise Exception("Wrong arguments! x_begin should be less or equal x_end")
         if y_begin > y_end:
             raise Exception("Wrong arguments! y_begin should be less or equal y_end")
         
+        # Цикл формирования очереди
         self._queue = []
         z_begin = 0
         for z in range(z_begin, z_end + 1):
@@ -39,13 +50,16 @@ class Controller:
 
 
     def get_block(self) -> Block:
+        '''
+        Функция выдачи блока из очереди
+        '''
         logging.info(f"Getting block")
-        if ~self.is_auto:
-            pass
-        
+
+        # Проверка конца работы станка
         if not self._queue:
             self.status = Status.STOPPED
         
+        # Создание результата
         x, y, z = self._queue.pop(0)
         block = Block(
             status=self.status,
