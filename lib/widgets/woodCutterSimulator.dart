@@ -38,6 +38,8 @@ class WoodCutterSimualtor extends StatefulWidget {
 class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   Map<TextEditingController, bool> errorMap;
   woodCutter.WoodCutterController woodCutterController;
+  woodCutter.WoodCutterController getCurrentController() => woodCutterController;
+  woodCutter.WoodCutterController setCurrentController(woodCutter.WoodCutterController controller) => woodCutterController = controller;
 
   bool isAuto = true;
   bool isPaused = false;
@@ -86,14 +88,14 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
                 children: [
                   Padding(padding: EdgeInsets.all(5.0), child: Text(mode)),
                   SizedBox(height: 5.0),
-                  _createTextField(widget.xBeginController, "Отступ по X", maxValue: woodCutterController.axisLimits[woodCutter.Axis.X]),
-                  _createTextField(widget.yBeginController, "Отступ по Y", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Y]),
+                  _createTextField(widget.xBeginController, "Отступ по X", maxValue: woodCutterController.axisLimits[woodCutter.Axis.X] - 1),
+                  _createTextField(widget.yBeginController, "Отступ по Y", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Y] - 1),
                   SizedBox(height: 5.0),
-                  _createTextField(widget.xEndController, "XMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.X]),
-                  _createTextField(widget.yEndController, "YMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Y]),
-                  _createTextField(widget.zEndController, "ZMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Z]),
+                  _createTextField(widget.xEndController, "XMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.X] - 1),
+                  _createTextField(widget.yEndController, "YMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Y] - 1),
+                  _createTextField(widget.zEndController, "ZMAX", maxValue: woodCutterController.axisLimits[woodCutter.Axis.Z] - 1),
                   SizedBox(height: 5.0),
-                  _createTextField(widget.timeController, "TMAX", maxValue: WoodCutterSimualtor.MAX_TIME_MS),
+                  _createTextField(widget.timeController, "TMAX", maxValue: WoodCutterSimualtor.MAX_TIME_MS, minValue: 1000),
                   _createTextField(widget.addressController, "Host"),
                   SizedBox(height: 5.0),
                   Row(
@@ -130,14 +132,14 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   // `controller` - text holder
   // `name` - field name
   // `maxValue` - max number value of textfield
-  Widget _createTextField(TextEditingController controller, String name, {int maxValue}) {
+  Widget _createTextField(TextEditingController controller, String name, {int maxValue, int minValue}) {
     bool errorStatus = errorMap[controller];
     
     if (errorStatus != null) {
       if (maxValue != null) {
-        name += " (от 0 до $maxValue)";
+        name += " (от ${minValue ?? 0} до $maxValue)";
       } else {
-        name += " (от 0)";
+        name += " (от ${minValue ?? 0})";
       }
     }
 
@@ -275,6 +277,8 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
 
       widget.web.get(widget.addressController.text, "/block")
       .then((response) {
+        print("/block STATUS: ${response.status}");
+
         if (response.status == 200) {
           try {
             _nextBlock(
@@ -308,10 +312,13 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
   // Moves saw to next block
   _nextBlock(String status, bool isAuto, bool isSetupChanged, int x, int y, int z) {
     if (status == "work") {
+      print("MOVE SAW: $x $y $z");
+
       setState(() {
+        isPaused = false;
+
         if (isSetupChanged) {
-          isPaused = false;
-          woodCutterController = woodCutter.WoodCutterController(sawX: x, sawY: y);
+          woodCutterController.moveSaw(x, y, -1);
         }
 
         woodCutterController.moveSaw(x, y, z);
@@ -327,7 +334,7 @@ class WoodCutterSimualtorState extends State<WoodCutterSimualtor> {
     }
 
     if (status == "noSetup") {
-      setState(() => woodCutterController = null);
+      setState(() => woodCutterController = woodCutter.WoodCutterController(sawX: 0, sawY: 0));
     }
   }
 }
